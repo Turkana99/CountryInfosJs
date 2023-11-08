@@ -1,0 +1,11 @@
+/*Jumbotron style*/
+.jumbotron {
+    padding: 120px 115px 50px 115px;
+    background-color: #27A967;
+    color: white !important;
+    text-align: center;
+}
+
+.jumbotron .btn {
+    color: white;
+}

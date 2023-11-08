@@ -1,0 +1,38 @@
+/*Navbar style*/
+.my_navbar {
+    position: fixed !important;
+    z-index: 99;
+    color: white;
+    padding: 0px !important;
+}
+
+.my_navbar .scd_header {
+    color: white;
+    width: 100%;
+    margin: auto;
+}
+
+.my_navbar ul li a {
+    color: white;
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.my_navbar ul li a:hover{
+    color: #27A967;
+}
+
+.my_navbar .frs_title {
+    font-family: 'Dosis', sans-serif;
+    font-size: 32px !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+.my_navbar .scd_title {
+    font-family: 'Dosis', sans-serif;
+    font-size: 38px;
+    color: white !important;
+    font-weight: bold;
+}
