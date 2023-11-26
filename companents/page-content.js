@@ -1,12 +1,32 @@
 import { render } from "../index.js";
 import InfoModal from "./infoModal.js";
 
-export default function PageContent() {
-  const parser = new DOMParser();
-  const parsed = parser.parseFromString(pageContent, "text/html");
+async function getCountries() {
+  // Await-den ist. edecemse function mutleq async olmalidir.
+  const response = await fetch("https://restcountries.com/v3.1/all"); // Fetch netice olaraq prmise qaytardigi ucun await-den ist. edirik.
 
-  const inputGroup = parsed.querySelector(".input-group");
+  const countries = await response.json(); // Promise type-ni json formatina cevirmek ucun yaziriq.
+  return countries;
+}
+
+export default function PageContent() {
+  const parser = new DOMParser(); // DOMParser adinda classimizdan obyekt yaradiriq
+  const parsed = parser.parseFromString(pageContent, "text/html"); // text formatindan document(DOM) cevirir
+  const inputGroup = parsed.querySelector(".input-group"); // Dom elemtinden select edirik
+  let findCountry = parsed.querySelector("#find-country");
   const cards = parsed.querySelector(".cards");
+  let countriesOptions = `
+  <option>Select country</option>`;
+
+  getCountries().then((response) => {
+    // .then metodunun icerisi data geldikden sonra ise dusur
+    let names = response.map((x) => x.name); // Name-lerden ibaret bir array
+    for (const name of names) {
+      // Array eleementlerini dovre saliriq
+      countriesOptions += `<option value="${name.common}">${name.common}</option>`;
+    }
+    findCountry.innerHTML = countriesOptions;
+  });
 
   for (const btn of cards.querySelectorAll(`button[data-id="more-info"]`)) {
     btn.addEventListener("click", (event) => {
@@ -28,16 +48,51 @@ export default function PageContent() {
   wrapper.appendChild(inputGroup);
   wrapper.appendChild(cards);
 
+  $(document).ready(function () {
+    // Slect-2 hhazir kitabxana kodu
+    $("#find-country").select2();
+
+    $("#find-country").on("change", function () {
+      fetch(
+        `https://restcountries.com/v3.1/name/${
+          $(this).find(":selected")[0].value
+        }`
+      )
+        .then((response) => {
+          return response.json();
+        })
+        .then(
+          ([
+            {
+              name: { common },
+              flags: { png, alt },
+            },
+          ]) => {
+            cards.innerHTML = "";
+            let temp = `<div class="card card1 bg-dark">
+          <div class="container">
+              <img src="${png}" alt="${alt}">
+          </div>
+          <div class="noi-dung">
+              <h3>${common}</h3>
+              <p>${alt}</p>
+              <button data-id='more-info' class="btn btn1" type="button"  data-toggle="modal" data-target="#exampleModal" id="myBtn">More Info</button>
+          </div>
+      </div>`;
+            temp = temp + temp + temp;
+            cards.innerHTML = temp;
+          }
+        );
+    });
+  });
   return wrapper;
 }
 
-let pageContent = `<div class="input-group px-5">
-<input type="text" class="form-control" placeholder="Search country">
-<div class="input-group-append">
-  <button class="btn bg-dark" type="button">
-    <i class="fa fa-search"></i>
-  </button>
-</div>
+let pageContent = `
+<div class="input-group px-5">
+<select id="find-country" class="w-100">
+</select>
+
 </div>
 <div class="cards px-5 pt-5">
         <div class="card card1 bg-dark">
